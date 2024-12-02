@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuenta Regresiva para Año Nuevo</title>
+  <style>
+    body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e1e2f, #3a3a5a);
+            color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #current-time {
+            text-align: center;
+            background-color: rgba(41, 41, 61, 0.8);
+            color: #87cefa;
+            padding: 10px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            margin: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #current-time:hover {
+            background-color: rgba(41, 41, 61, 1);
+        }
+
+        main {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            color: #ffcc00;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #countdown {
+            font-size: 2em;
+            margin: 20px 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(41, 41, 61, 0.8);
+            color: #00ff00;
+            display: none;
+            border-radius: 5px;
+            margin: 20px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1em;
+            margin-top: 20px;
+            background-color: #87cefa;
+            color: #1e1e2f;
+            border: 2px solid #1e1e2f;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        select:hover {
+            background-color: #00bfff;
+            transform: scale(1.00);
+        }
+
+        option {
+            background-color: #1e1e2f;
+            color: #f1f1f1;
+        }
+
+        .link-container {
+            background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco con opacidad */
+            border-radius: 10px; /* Bordes redondeados */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+            padding: 20px; /* Espaciado interno */
+            text-align: center; /* Centra el texto */
+            margin: 20px; /* Margen para separar del resto */
+        }
+
+        h2 {
+            color: #333; /* Color del texto del título */
+            margin-bottom: 15px; /* Espacio debajo del título */
+        }
+
+        a {
+            text-decoration: none; /* Sin subrayado */
+            color: #007bff; /* Color del enlace */
+            font-weight: bold; /* Texto en negrita */
+            padding: 10px 15px; /* Espaciado interno del enlace */
+            border: 2px solid #007bff; /* Borde del enlace */
+            border-radius: 5px; /* Bordes redondeados del enlace */
+            transition: background-color 0.3s, color 0.3s; /* Transición suave */
+        }
+
+        a:hover {
+            background-color: #007bff; /* Color de fondo al pasar el mouse */
+            color: #ffffff; /* Color del texto al pasar el mouse */
+        }
+    </style>
+</head>
+<body>
+  <!-- Fecha y hora actual en la parte superior -->
+  <div id="current-time">Cargando fecha y hora actual...</div>
+
+  <!-- Selector de zona horaria -->
+  <select id="timezone-selector">
+    <option value="0">Selecciona una zona horaria</option>
+    <!-- Opciones de zonas horarias se llenarán con JS -->
+  </select>
+
+  <div>
+    <h2>Y ya que estas aqui vista este enlace:</h2>
+    <a href="https://github.com/AlexanderMakunin/" target="_blank">Github de Alex</a>
+  </div>
+
+  <main>
+    <h1>Cuenta Regresiva para Año Nuevo (Zona horaria: Madrid)</h1>
+    <p id="countdown">Cargando...</p>
+  </main>
+
+  <div>
+    <p>Creado por Alex (usando ChatGPT obviamente)</p>
+  </div>
+
+  <footer id="footer">
+    <p>¡Feliz Año Nuevo desde Madrid!</p>
+  </footer>
+
+  <script>
+    // Array con algunas zonas horarias populares (puedes ampliar esto con más zonas)
+    const timezones = [
+      { name: "Madrid", timezone: "Europe/Madrid" },
+      { name: "Nueva York", timezone: "America/New_York" },
+      { name: "Los Ángeles", timezone: "America/Los_Angeles" },
+      { name: "Londres", timezone: "Europe/London" },
+      { name: "Tokio", timezone: "Asia/Tokyo" },
+      { name: "Sidney", timezone: "Australia/Sydney" },
+      { name: "Buenos Aires", timezone: "America/Argentina/Buenos_Aires" },
+      { name: "São Paulo", timezone: "America/Sao_Paulo" },
+      { name: "París", timezone: "Europe/Paris" },
+      { name: "El Cairo", timezone: "Africa/Cairo" },
+      { name: "Johannesburgo", timezone: "Africa/Johannesburg" },
+      { name: "Moscú", timezone: "Europe/Moscow" }
+    ];
+
+    // Llenar el selector con todas las zonas horarias
+    const timezoneSelector = document.getElementById("timezone-selector");
+    timezones.forEach((zone, index) => {
+      const option = document.createElement("option");
+      option.value = zone.timezone;
+      option.textContent = zone.name;
+      timezoneSelector.appendChild(option);
+    });
+
+    // Función para obtener la hora local para la zona horaria seleccionada
+    function updateCurrentTime() {
+      const timezone = document.getElementById("timezone-selector").value;
+
+      if (!timezone || timezone === "0") {
+        document.getElementById("current-time").textContent = "Selecciona una zona horaria";
+        return;
+      }
+
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: timezone };
+      const formattedDate = now.toLocaleDateString('es-ES', options); // Fecha formateada
+      const formattedTime = now.toLocaleTimeString('es-ES', { timeZone: timezone }); // Hora formateada
+
+      // Mostrar la hora de la zona seleccionada
+      const zoneName = timezones.find(z => z.timezone === timezone).name;
+      document.getElementById("current-time").textContent = 
+        `${formattedDate}, ${formattedTime} (${zoneName})`;
+    }
+
+    // Detectar cambio en el selector de zona horaria
+    document.getElementById("timezone-selector").addEventListener("change", updateCurrentTime);
+
+    // Función para calcular el tiempo restante hasta el Año Nuevo
+    function startCountdown() {
+      const newYear = new Date(new Date().getFullYear() + 1, 0, 1); // Medianoche del próximo 1 de enero
+
+      function updateCountdown() {
+        const now = new Date(); // Hora actual
+        const difference = newYear - now; // Diferencia en milisegundos
+
+        if (difference <= 0) {
+          // Si ya es Año Nuevo
+          document.getElementById("countdown").textContent = "¡Feliz Año Nuevo!";
+          document.getElementById("footer").style.display = "block"; // Mostrar el footer
+          clearInterval(timer); // Detener el temporizador
+          return;
+        }
+
+        // Convertir la diferencia en días, horas, minutos y segundos
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        // Actualizar el contenido del contador
+        document.getElementById("countdown").textContent = 
+          `${days} días, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+      }
+
+      // Actualizar cada segundo
+      const timer = setInterval(updateCountdown, 1000);
+      updateCountdown(); // Ejecutar inmediatamente la primera vez
+    }
+
+    // Iniciar la cuenta regresiva
+    startCountdown();
+
+    // Actualizar la hora actual cada segundo
+    setInterval(updateCurrentTime, 1000); // Actualiza cada segundo la hora local
+  </script>
+</body>
+</html>
